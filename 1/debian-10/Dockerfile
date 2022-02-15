@@ -24,6 +24,13 @@ ENV BITNAMI_APP_NAME="pytorch" \
     PATH="/opt/bitnami/python/bin:/opt/bitnami/common/bin:$PATH"
 
 WORKDIR /app
-USER 1001
-ENTRYPOINT [ "/opt/bitnami/scripts/pytorch/entrypoint.sh" ]
-CMD [ "python" ]
+
+RUN install_packages ffmpeg python3.7-dev
+RUN pip install --upgrade pip && pip install backgroundremover
+RUN pip uninstall -y certifi && pip install certifi
+
+# Download our favorite fren and remove the background to get backgroundremover to download the model
+RUN curl "https://gateway.pinata.cloud/ipfs/QmbJ3XshhuW5qiJJvAks4UDvNQhwH2UkpNiC1aLm6R2LPn/1257.png" -o fren4life.png && \
+    backgroundremover -i fren4life.png -m "u2netp" -o fren4life-sticker.png
+
+CMD [ "backgroundremover" ]
