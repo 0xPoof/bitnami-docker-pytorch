@@ -29,8 +29,13 @@ RUN install_packages ffmpeg python3.7-dev
 RUN pip install --upgrade pip && pip install backgroundremover
 RUN pip uninstall -y certifi && pip install certifi
 
-# Download our favorite fren and remove the background to get backgroundremover to download the model
-RUN curl "https://gateway.pinata.cloud/ipfs/QmbJ3XshhuW5qiJJvAks4UDvNQhwH2UkpNiC1aLm6R2LPn/1257.png" -o fren4life.png && \
-    backgroundremover -i fren4life.png -m "u2netp" -o fren4life-sticker.png
+# Download a test image and the ML models to verify the removal process works
+RUN curl "https://frenmoji-media.s3.amazonaws.com/backgroundremover/fren.png" -o fren.png && \
+    mkdir ~/.u2net/ && \
+    curl "https://frenmoji-media.s3.amazonaws.com/backgroundremover/u2netp.pth" -o ~/.u2net/u2netp.pth && \
+    curl "https://frenmoji-media.s3.amazonaws.com/backgroundremover/u2net.pth" -o ~/.u2net/u2net.pth && \
+    backgroundremover -i fren.png -m "u2netp" -o fren-sticker.png && \
+    backgroundremover -i fren.png -m "u2net" -o fren-sticker.png && \
+    rm fren.png fren-sticker.png
 
 CMD [ "backgroundremover" ]
